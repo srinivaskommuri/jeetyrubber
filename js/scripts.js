@@ -622,4 +622,43 @@
 		}
 	});
 
+	// Theme switcher
+	function hexToRgb(hex) {
+		var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+		hhex = hex.replace(shorthandRegex, function(m, r, g, b) {
+			return r + r + g + g + b + b;
+		});
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
+	}
+
+	function applyTheme(hex){
+		document.documentElement.style.setProperty('--pbmit-global-color', hex);
+		var rgb = hexToRgb(hex);
+		if(rgb){
+			document.documentElement.style.setProperty('--pbmit-global-color-rgb', rgb.r + ',' + rgb.g + ',' + rgb.b);
+		}
+		document.documentElement.style.setProperty('--pbmit-link-color-hover', hex);
+		localStorage.setItem('pbmit-theme-color', hex);
+		// update toggle button bg
+		var $btn = jQuery('#theme-switcher .toggle-btn');
+		if($btn.length) $btn.css('background', hex);
+	}
+
+	function initThemeSwitcher(){
+		var saved = localStorage.getItem('pbmit-theme-color');
+		if(saved){ applyTheme(saved); jQuery('.theme-switcher .swatch[data-color="'+saved+'"]').addClass('active'); }
+		jQuery(document).on('click', '.theme-switcher .swatch', function(){
+			var color = jQuery(this).data('color');
+			applyTheme(color);
+			jQuery('.theme-switcher .swatch').removeClass('active');
+			jQuery(this).addClass('active');
+		});
+		jQuery(document).on('click', '#theme-switcher .toggle-btn', function(){
+			jQuery('#theme-switcher').toggleClass('open');
+		});
+	}
+
+	jQuery(function(){ initThemeSwitcher(); });
+
 })($);
