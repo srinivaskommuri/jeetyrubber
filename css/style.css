@@ -2986,3 +2986,7 @@ form .form-check-input[type=checkbox] {
         margin-bottom: 12px;
     }
 }
+
+.media-img img {
+    min-height: 280px !important;
+}
